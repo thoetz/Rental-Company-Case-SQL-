@@ -1,0 +1,84 @@
+# MavenMovies Database Analysis
+
+## Project Overview:
+
+This SQL script analyzes various aspects of the MavenMovies database to provide insights for business decisions. The following SQL queries cover different functionalities and concepts:
+
+### Concepts Covered:
+- Basic Data Retrieval
+- Aggregation and Grouping
+- Joins
+- Conditional Logic
+- Data Analysis
+
+### Project Summary:
+The MavenMovies database analysis aims to provide insights into different aspects of the movie rental business. From staff management to inventory assessment and customer profiling, the queries address key areas of interest for decision-making.
+
+## SQL Queries:
+
+```sql
+/*
+1. We will need a list of all staff members, including their first and last names, 
+email addresses, and the store identification number where they work.
+*/
+SELECT first_name, last_name, email, store_id
+FROM staff;
+
+/*
+2. We will need separate counts of inventory items held at each of your two stores.
+*/
+SELECT film_id,
+COUNT(CASE WHEN store_id = 1 THEN inventory_id ELSE NULL END) AS store_1_inv,
+COUNT(CASE WHEN store_id = 2 THEN inventory_id ELSE NULL END) AS store_2_inv 
+FROM inventory
+GROUP BY film_id
+ORDER BY film_id;
+
+/*
+3. We will need a count of active customers for each of your stores. Separately, please.
+*/
+SELECT store_id,
+COUNT(CASE WHEN active = 1 THEN customer_id ELSE NULL END) active
+FROM customer
+GROUP BY store_id;
+
+/*
+4. In order to assess the liability of a data breach, we will need you to provide a count 
+of all customer email addresses stored in the database.
+*/
+SELECT COUNT(email) AS total_emails
+FROM customer;
+
+/*
+5. We are interested in how diverse your film offering is as a means of understanding how likely 
+you are to keep customers engaged in the future.
+*/
+SELECT store_id, COUNT(DISTINCT film_id) AS total_films
+FROM inventory
+GROUP BY store_id;
+
+SELECT COUNT(DISTINCT name) AS total_categories
+FROM category;
+
+/*
+6. We would like to understand the replacement cost of your films.
+*/
+SELECT AVG(replacement_cost) AS avg_replacement_cost,
+MIN(replacement_cost) AS cheapest,
+MAX(replacement_cost) AS most_expensive
+FROM film;
+
+/*
+7. We are interested in having you put payment monitoring systems and maximum payment 
+processing restrictions in place in order to minimize the future risk of fraud by your staff.
+*/
+SELECT AVG(amount) AS avg_payment, MAX(amount) AS max_payment
+FROM payment;
+
+/*
+8. We would like to better understand what your customer base looks like.
+*/
+SELECT customer_id, COUNT(rental_id) AS total_rentals
+FROM rental
+GROUP BY customer_id
+ORDER BY total_rentals DESC;
