@@ -1,0 +1,167 @@
+### SQL Functions and Concepts Covered:
+
+- **Basic Data Retrieval**:
+  - Selecting specific columns using `SELECT`.
+  - Concatenating strings using `CONCAT()`.
+  - Filtering data using `WHERE`.
+
+- **Joining Tables**:
+  - Performing inner joins using `JOIN`.
+
+- **Grouping and Aggregating Data**:
+  - Grouping data using `GROUP BY`.
+  - Aggregating data using functions such as `COUNT()`, `AVG()`, and `SUM()`.
+
+- **Combining Data**:
+  - Combining data from multiple tables using `UNION`.
+
+---
+
+/* 
+**Project Summary:**
+This SQL script provides insights into various aspects of a movie rental business, including store management, inventory analysis, customer demographics, financial performance, and key stakeholders.
+
+1. **Store Management:**
+   - Retrieves managers' names along with the full address of each store.
+
+2. **Inventory Analysis:**
+   - Lists inventory items stocked, including film details such as rating, rental rate, and replacement cost.
+   - Provides a summary overview of inventory items by rating and store.
+
+3. **Inventory Diversity:**
+   - Analyzes the diversity of inventory based on replacement cost, providing insights into potential financial risks.
+
+4. **Customer Demographics:**
+   - Provides a list of customer names, their store affiliations, activity status, and full addresses.
+
+5. **Financial Performance:**
+   - Calculates the total lifetime rentals and payments collected from customers, ordering them by total spending.
+
+6. **Stakeholder Analysis:**
+   - Lists advisors and investors, categorizing them based on their roles and affiliations.
+
+7. **Actor Awards Analysis:**
+   - Analyzes the coverage of highly awarded actors in the film inventory.
+
+---
+
+/* SQL Queries: */
+
+/* 1. Store Management */
+SELECT 
+    CONCAT(staff.first_name," ", staff.last_name) AS manager_name,
+    address.address,
+    city.city,
+    address.postal_code,
+    address.district,
+    country.country
+FROM
+    address
+        JOIN
+    store ON address.address_id = store.address_id
+        JOIN
+    staff ON store.manager_staff_id = staff.staff_id
+        JOIN
+    city ON address.city_id = city.city_id
+        JOIN
+    country ON city.country_id = country.country_id;
+    
+/* 2. Inventory Analysis */
+SELECT 
+	store_id,
+    inventory_id,
+    film.title,
+    film.rating,
+    film.rental_rate,
+    film.replacement_cost
+FROM inventory
+JOIN film
+ON inventory.film_id = film.film_id;
+
+/* 3. Inventory Summary */
+SELECT 
+	store_id,
+    film.rating,
+    COUNT(inventory_id) AS inventory_count
+FROM inventory
+JOIN film
+ON inventory.film_id = film.film_id
+GROUP BY 
+	film.rating,
+    inventory.store_id;
+
+/* 4. Inventory Diversity */
+SELECT 
+	store_id,
+    film.rating,
+    COUNT(inventory_id) AS inventory_count,
+    AVG(replacement_cost) AS average_cost,
+    SUM(replacement_cost) AS total_cost
+FROM inventory
+JOIN film
+ON inventory.film_id = film.film_id
+GROUP BY 
+	film.rating,
+    inventory.store_id;
+
+/* 5. Customer Demographics */
+SELECT 
+	first_name,
+    last_name,
+    store_id,
+    CASE WHEN active = 1 THEN 'active' ELSE 'innactive' END AS status,
+    address.address,
+    city.city,
+    country.country
+    FROM customer
+	INNER JOIN address
+    ON customer.address_id = address.address_id
+    JOIN city
+    ON address.city_id = city.city_id
+    JOIN country
+    ON city.country_id = country.country_id;
+
+/* 6. Financial Performance */
+SELECT
+	first_name,
+    last_name,
+    COUNT(*) AS total_rentals,
+    SUM(payment.amount) AS total_spent
+    FROM customer
+    JOIN payment
+    ON customer.customer_id = payment.customer_id
+    GROUP BY customer.customer_id
+    ORDER BY total_spent DESC;
+    
+/* 7. Stakeholder Analysis */
+SELECT 
+	investor.first_name,
+    investor.last_name,
+    'investor' AS type,
+    investor.company_name AS affiliation
+    FROM investor
+    UNION 
+SELECT 
+	advisor.first_name,
+    advisor.last_name,
+    'advisor' AS type,
+    NULL AS affiliation
+    FROM advisor;
+
+/* 8. Actor Awards Analysis */
+SELECT
+	CASE 
+		WHEN actor_award.awards = 'Emmy, Oscar, Tony ' THEN '3 awards'
+        WHEN actor_award.awards IN ('Emmy, Oscar','Emmy, Tony', 'Oscar, Tony') THEN '2 awards'
+		ELSE '1 award'
+	END AS number_of_awards, 
+    AVG(CASE WHEN actor_award.actor_id IS NULL THEN 0 ELSE 1 END) AS pct_w_one_film
+	
+FROM actor_award
+
+GROUP BY 
+	CASE 
+		WHEN actor_award.awards = 'Emmy, Oscar, Tony ' THEN '3 awards'
+        WHEN actor_award.awards IN ('Emmy, Oscar','Emmy, Tony', 'Oscar, Tony') THEN '2 awards'
+		ELSE '1 award'
+	END
