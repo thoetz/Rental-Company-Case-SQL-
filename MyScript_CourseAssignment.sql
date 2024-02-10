@@ -1,3 +1,39 @@
+### Project Overview:
+
+**Project Context:** As a data analyst working for Jimmy, the owner of a movie rental company, you're tasked with managing the company's database and providing insights to support business decisions.
+
+**Data Analysis and Insights:** Jimmy relies on your expertise to analyze various aspects of the movie rental business, including customer behavior, movie inventory management, and revenue generation.
+
+**Customer Segmentation and Engagement:** Your analysis helps Jimmy segment customers based on their rental activity and payment behavior, allowing the company to tailor marketing strategies and improve customer engagement.
+
+**Inventory Management:** Queries are made to efficiently manage the movie inventory across different store locations, ensuring adequate stock levels and optimizing rental offerings.
+
+**Actor and Film Analysis:** Jimmy seeks insights into the relationship between actors and films, such as understanding the popularity of specific actors and identifying trends in movie preferences among customers.
+
+**Business Insights and Decision Support:** By leveraging SQL queries and data analysis techniques, you provide Jimmy with valuable insights into business performance metrics, enabling informed decision-making and strategic planning to drive company growth and profitability.
+
+### SQL Functions and Concepts Covered:
+1. **Basic Data Retrieval**:
+   - Selecting specific columns from a table using `SELECT`.
+   - Filtering data using `WHERE`.
+   - Using `DISTINCT` to retrieve unique values.
+   - Aggregating data using functions like `COUNT()`, `MIN()`, `MAX()`, and `AVG()`.
+   - Using logical operators such as `AND`, `OR`, and `BETWEEN`.
+
+2. **Joining Tables**:
+   - Performing inner joins between tables based on shared keys using `JOIN`.
+   - Utilizing multiple joins to retrieve data from related tables.
+   - Combining data from multiple tables using `UNION`.
+
+3. **Grouping and Aggregating Data**:
+   - Grouping data using `GROUP BY`.
+   - Filtering grouped data using `HAVING`.
+   - Using aggregate functions within grouped queries.
+
+4. **Conditional Logic**:
+   - Implementing conditional logic using `CASE` statements.
+   - Handling conditional filtering and categorization of data.
+
 use mavenmovies;
 
 -- Jimmy boss wants to email all of our customers. Get the list for him
